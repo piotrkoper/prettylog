@@ -199,17 +199,21 @@ func TestHandle_LevelFormatting(t *testing.T) {
 	}
 
 	for _, tc := range levels {
-		var buf bytes.Buffer
-		h := New(&slog.HandlerOptions{Level: slog.LevelDebug}, WithDestinationWriter(&buf))
+		tc := tc
 
-		r := slog.NewRecord(time.Now(), tc.level, "msg", 0)
-		if err := h.Handle(context.Background(), r); err != nil {
-			t.Fatalf("Handle returned error for level %v: %v", tc.level, err)
-		}
+		t.Run(tc.expected, func(t *testing.T) {
+			var buf bytes.Buffer
+			h := New(&slog.HandlerOptions{Level: slog.LevelDebug}, WithDestinationWriter(&buf))
 
-		out := buf.String()
-		if !strings.Contains(out, tc.expected) {
-			t.Errorf("expected level %s in output, got: %s", tc.expected, out)
-		}
+			r := slog.NewRecord(time.Now(), tc.level, "msg", 0)
+			if err := h.Handle(context.Background(), r); err != nil {
+				t.Fatalf("Handle returned error for level %v: %v", tc.level, err)
+			}
+
+			out := buf.String()
+			if !strings.Contains(out, tc.expected) {
+				t.Errorf("expected level %s in output, got: %s", tc.expected, out)
+			}
+		})
 	}
 }
