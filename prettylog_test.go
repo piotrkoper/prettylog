@@ -4,18 +4,19 @@ import (
 	"bytes"
 	"context"
 	"log/slog"
+	"os"
 	"strings"
 	"testing"
 	"time"
 )
 
-func TestNewHandler_WritesToStdout(t *testing.T) {
+func TestNewHandler_SetsWriterAndOptions(t *testing.T) {
 	h := NewHandler(nil)
 	if h == nil {
 		t.Fatal("NewHandler returned nil")
 	}
-	if h.writer == nil {
-		t.Fatal("NewHandler writer is nil")
+	if h.writer != os.Stdout {
+		t.Fatalf("NewHandler writer = %v, want os.Stdout", h.writer)
 	}
 	if !h.outputEmptyAttrs {
 		t.Error("NewHandler should set outputEmptyAttrs to true")
